@@ -1,5 +1,7 @@
 package com.example.books.security;
 
+import static java.util.Date.from;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.KeyStore;
@@ -9,9 +11,12 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
+import java.time.Instant;
+import java.util.Date;
 
 import javax.annotation.PostConstruct;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +31,9 @@ import static io.jsonwebtoken.Jwts.parser;
 public class JwtProvider {
 	
 	private KeyStore keyStore; // 45 min
-	
+    @Value("${jwt.expiration.time}")
+    private Long jwtExpirationInMillis;
+    
 	@PostConstruct
 	public void init() {
 		try {
@@ -43,9 +50,20 @@ public class JwtProvider {
 		return Jwts.builder()
 				.setSubject(principal.getUsername())
 				.signWith(getPrivateKey())
+				.setExpiration(Date.from(Instant.now().plusMillis(jwtExpirationInMillis)))
 				.compact();
 		
 	}
+	
+    public String generateTokenWithUserName(String username) {
+        return Jwts.builder()
+                .setSubject(username)
+                .setIssuedAt(from(Instant.now()))
+                .signWith(getPrivateKey())
+                .setExpiration(Date.from(Instant.now().plusMillis(jwtExpirationInMillis)))
+                .compact();
+    }
+
 	
 	private PrivateKey getPrivateKey() {
 		try {
@@ -79,4 +97,9 @@ public class JwtProvider {
 
         return claims.getSubject();
     }
+    
+    public Long getJwtExpirationInMillis() {
+        return jwtExpirationInMillis;
+    }
+    
 }
