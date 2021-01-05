@@ -1,6 +1,6 @@
 package com.example.books.dto;
 
-import com.example.books.dto.BookShelfDto;
+import com.example.books.dto.BookDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class BookShelfDto {
+public class BookDto {
     private Long id;
     private String name;
     private String description;

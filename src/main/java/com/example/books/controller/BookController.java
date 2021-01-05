@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.books.dto.BookShelfDto;
-import com.example.books.controller.BookShelfController;
-import com.example.books.service.BookShelfService;
+import com.example.books.dto.BookDto;
+import com.example.books.controller.BookController;
+import com.example.books.service.BookService;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,20 +22,20 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/api/bookshelf")
 @AllArgsConstructor
 @Slf4j
-public class BookShelfController {
+public class BookController {
 
-    private final BookShelfService bookShelfService;
+    private final BookService bookService;
     
     @PostMapping
-    public ResponseEntity<BookShelfDto> createBookShelf(@RequestBody BookShelfDto bookShelfDto) {
+    public ResponseEntity<BookDto> createBookShelf(@RequestBody BookDto bookDto) {
     	return ResponseEntity.status(HttpStatus.CREATED)
-    	.body(bookShelfService.save(bookShelfDto));
+    	.body(bookService.save(bookDto));
     }
     
     @GetMapping
-    public ResponseEntity<List<BookShelfDto>> getAllBookShelfs() {
+    public ResponseEntity<List<BookDto>> getAllBookShelfs() {
     	return ResponseEntity.status(HttpStatus.OK)
-    			.body(bookShelfService.getAll());
+    			.body(bookService.getAll());
     }
     /*
     @PostMapping

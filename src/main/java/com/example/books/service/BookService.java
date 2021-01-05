@@ -7,11 +7,11 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.books.dto.BookShelfDto;
+import com.example.books.dto.BookDto;
 import com.example.books.exceptions.DemoApplicationException;
-import com.example.books.model.BookShelf;
-import com.example.books.repository.BookShelfRepository;
-import com.example.books.service.BookShelfService;
+import com.example.books.model.Book;
+import com.example.books.repository.BookRepository;
+import com.example.books.service.BookService;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,36 +19,36 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @AllArgsConstructor
 @Slf4j
-public class BookShelfService {
+public class BookService {
 
-    private final BookShelfRepository bookShelfRepository;
+    private final BookRepository bookRepository;
     //private final BookShelfMapper BookShelfMapper;
 	
     @Transactional
-	public BookShelfDto save(BookShelfDto bookShelfDto) {
-		BookShelf save = bookShelfRepository.save(mapBookShelfDto(bookShelfDto));
-		bookShelfDto.setId(save.getId());
-		return bookShelfDto;
+	public BookDto save(BookDto bookDto) {
+		Book save = bookRepository.save(mapBookDto(bookDto));
+		bookDto.setId(save.getId());
+		return bookDto;
 	}
     
 	@Transactional(readOnly = true)
-	public List<BookShelfDto> getAll() {
-		return bookShelfRepository.findAll()
+	public List<BookDto> getAll() {
+		return bookRepository.findAll()
 			.stream()
 			.map(this::mapToDto)
 			.collect(toList());
 		
 	}
 	
-	private BookShelfDto mapToDto(BookShelf bookShelf) {
-		return BookShelfDto.builder().name(bookShelf.getName())
+	private BookDto mapToDto(Book bookShelf) {
+		return BookDto.builder().name(bookShelf.getName())
 				.id(bookShelf.getId())
-				.numberOfBooks(bookShelf.getPosts().size())
+				
 				.build();
 	}
 
-	private BookShelf mapBookShelfDto(BookShelfDto bookShelfDto) {
-		return BookShelf.builder().name(bookShelfDto.getName())
+	private Book mapBookDto(BookDto bookShelfDto) {
+		return Book.builder().name(bookShelfDto.getName())
 		.description(bookShelfDto.getDescription())
 		.build();
 		
