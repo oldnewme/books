@@ -23,6 +23,8 @@ public class BookService {
 
     private final BookRepository bookRepository;
     //private final BookShelfMapper BookShelfMapper;
+    
+    private final AuthService authService;
 	
     @Transactional
 	public BookDto save(BookDto bookDto) {
@@ -40,16 +42,25 @@ public class BookService {
 		
 	}
 	
+	@Transactional(readOnly = true)
+	public List<BookDto> getUserBooks(){
+		return bookRepository.findAllUserBooks(authService.getCurrentUser().getUserId())
+				.stream()
+				.map(this::mapToDto)
+				.collect(toList());
+	}
+	
 	private BookDto mapToDto(Book bookShelf) {
 		return BookDto.builder().name(bookShelf.getName())
+				.description(bookShelf.getDescription())
 				.id(bookShelf.getId())
-				
 				.build();
 	}
 
 	private Book mapBookDto(BookDto bookShelfDto) {
 		return Book.builder().name(bookShelfDto.getName())
 		.description(bookShelfDto.getDescription())
+		.user(authService.getCurrentUser())
 		.build();
 		
 	}

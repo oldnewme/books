@@ -37,6 +37,13 @@ public class BookController {
     	return ResponseEntity.status(HttpStatus.OK)
     			.body(bookService.getAll());
     }
+    
+    @GetMapping ("/userbooks")
+    public ResponseEntity<List<BookDto>> getUserBooks() {
+    	return ResponseEntity.status(HttpStatus.OK)
+    			.body(bookService.getUserBooks());
+    }
+    
     /*
     @PostMapping
     public ResponseEntity<BookShelfDto> createBookShelf(@RequestBody BookShelfDto bookShelfDto) {

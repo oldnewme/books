@@ -4,6 +4,7 @@ import com.example.books.dto.AuthenticationResponse;
 import com.example.books.dto.LoginRequest;
 import com.example.books.dto.RefreshTokenRequest;
 import com.example.books.dto.RegisterRequest;
+import com.example.books.exceptions.DemoApplicationException;
 import com.example.books.model.User;
 import com.example.books.model.VerificationToken;
 import com.example.books.repository.UserRepository;
@@ -88,5 +89,13 @@ public class AuthService {
                 .username(refreshTokenRequest.getUsername())
                 .build();
 	}
+	
+	@Transactional(readOnly = true)
+    public User getCurrentUser() {
+        org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.
+                getContext().getAuthentication().getPrincipal();
+        return userRepository.findByUsername(principal.getUsername())
+                .orElseThrow(() -> new DemoApplicationException("User name not found - " + principal.getUsername()));
+    }
     
 }
