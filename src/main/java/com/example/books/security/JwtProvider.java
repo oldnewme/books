@@ -12,7 +12,7 @@ import java.security.cert.CertificateException;
 import javax.annotation.PostConstruct;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
-import com.example.books.exceptions.DemoApplicationException;
+import com.example.books.exceptions.BookApplicationException;
 import org.springframework.security.core.userdetails.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -21,7 +21,7 @@ import static io.jsonwebtoken.Jwts.parser;
 @Service
 public class JwtProvider {
 	
-	private KeyStore keyStore; // 45 min
+	private KeyStore keyStore;
     
 	@PostConstruct
 	public void init() {
@@ -30,7 +30,7 @@ public class JwtProvider {
 			InputStream resourceAsStream = getClass().getResourceAsStream("/springblog.jks");
 			keyStore.load(resourceAsStream, "secret".toCharArray());
 		} catch(KeyStoreException|CertificateException|NoSuchAlgorithmException|IOException e) {
-			throw new DemoApplicationException("Exception occured while loading keystore");
+			throw new BookApplicationException("Exception occured while loading keystore");
 		}
 	}
 	
@@ -43,23 +43,12 @@ public class JwtProvider {
 		
 	}
 	
-	/*
-    public String generateTokenWithUserName(String username) {
-        return Jwts.builder()
-                .setSubject(username)
-                .setIssuedAt(from(Instant.now()))
-                .signWith(getPrivateKey())
-                .compact();
-    }
-    */
-
-	
 	private PrivateKey getPrivateKey() {
 		try {
 			return (PrivateKey) keyStore.getKey("springblog","secret".toCharArray());
 			
 		} catch(KeyStoreException|NoSuchAlgorithmException|UnrecoverableKeyException e) {
-			throw new DemoApplicationException("Exception while retrieving key from keystore");
+			throw new BookApplicationException("Exception while retrieving key from keystore");
 		}
 	}
 	
@@ -73,7 +62,7 @@ public class JwtProvider {
         try {
             return keyStore.getCertificate("springblog").getPublicKey();
         } catch (KeyStoreException e) {
-            throw new DemoApplicationException("Exception occured while " +
+            throw new BookApplicationException("Exception occured while " +
                     "retrieving public key from keystore", e);
         }
     }

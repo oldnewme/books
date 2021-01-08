@@ -3,7 +3,7 @@ package com.example.books.service;
 import com.example.books.dto.AuthenticationResponse;
 import com.example.books.dto.LoginRequest;
 import com.example.books.dto.RegisterRequest;
-import com.example.books.exceptions.DemoApplicationException;
+import com.example.books.exceptions.BookApplicationException;
 import com.example.books.model.User;
 import com.example.books.repository.UserRepository;
 import com.example.books.security.JwtProvider;
@@ -58,7 +58,7 @@ public class AuthService {
         org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.
                 getContext().getAuthentication().getPrincipal();
         return userRepository.findByUsername(principal.getUsername())
-                .orElseThrow(() -> new DemoApplicationException("User name not found - " + principal.getUsername()));
+                .orElseThrow(() -> new BookApplicationException("User name not found - " + principal.getUsername()));
     }
     
 }

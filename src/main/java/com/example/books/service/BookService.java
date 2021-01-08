@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.books.dto.BookDto;
-import com.example.books.exceptions.DemoApplicationException;
+import com.example.books.exceptions.BookApplicationException;
 import com.example.books.model.Book;
 import com.example.books.repository.BookRepository;
 import com.example.books.service.BookService;
@@ -49,16 +49,16 @@ public class BookService {
 				.collect(toList());
 	}
 	
-	private BookDto mapToDto(Book bookShelf) {
-		return BookDto.builder().name(bookShelf.getName())
-				.description(bookShelf.getDescription())
-				.id(bookShelf.getId())
+	private BookDto mapToDto(Book book) {
+		return BookDto.builder().name(book.getName())
+				.description(book.getDescription())
+				.id(book.getId())
 				.build();
 	}
 
-	private Book mapBookDto(BookDto bookShelfDto) {
-		return Book.builder().name(bookShelfDto.getName())
-		.description(bookShelfDto.getDescription())
+	private Book mapBookDto(BookDto bookDto) {
+		return Book.builder().name(bookDto.getName())
+		.description(bookDto.getDescription())
 		.user(authService.getCurrentUser())
 		.build();
 		

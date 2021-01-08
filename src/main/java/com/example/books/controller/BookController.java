@@ -25,16 +25,17 @@ public class BookController {
     private final BookService bookService;
     
     @PostMapping
-    public ResponseEntity<BookDto> createBookShelf(@RequestBody BookDto bookDto) {
+    public ResponseEntity<BookDto> saveBook(@RequestBody BookDto bookDto) {
     	return ResponseEntity.status(HttpStatus.CREATED)
     	.body(bookService.save(bookDto));
     }
-    
+    /*
     @GetMapping
     public ResponseEntity<List<BookDto>> getAllBookShelfs() {
     	return ResponseEntity.status(HttpStatus.OK)
     			.body(bookService.getAll());
     }
+    */
     
     @GetMapping ("/userbooks")
     public ResponseEntity<List<BookDto>> getUserBooks() {
