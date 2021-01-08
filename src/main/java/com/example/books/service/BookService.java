@@ -18,7 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 
 @Service
 @AllArgsConstructor
-@Slf4j
 public class BookService {
 
     private final BookRepository bookRepository;
@@ -64,28 +63,4 @@ public class BookService {
 		.build();
 		
 	}
-	
-
-	/*
-    @Transactional
-    public BookShelfDto save(BookShelfDto BookShelfDto) {
-        BookShelf save = BookShelfRepository.save(BookShelfMapper.mapDtoToBookShelf(BookShelfDto));
-        BookShelfDto.setId(save.getId());
-        return BookShelfDto;
-    }
-
-    @Transactional(readOnly = true)
-    public List<BookShelfDto> getAll() {
-        return BookShelfRepository.findAll()
-                .stream()
-                .map(BookShelfMapper::mapBookShelfToDto)
-                .collect(toList());
-    }
-
-    public BookShelfDto getBookShelf(Long id) {
-        BookShelf BookShelf = BookShelfRepository.findById(id)
-                .orElseThrow(() -> new SpringRedditException("No BookShelf found with ID - " + id));
-        return BookShelfMapper.mapBookShelfToDto(BookShelf);
-    }
-    */
 }
