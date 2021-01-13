@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.example.books.dto.BookDto;
@@ -14,7 +15,6 @@ import com.example.books.controller.BookController;
 import com.example.books.service.BookService;
 
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @CrossOrigin(origins = { "http://localhost:3000"})
 @RestController
@@ -25,22 +25,16 @@ public class BookController {
     private final BookService bookService;
     
     @PostMapping
-    public ResponseEntity<BookDto> saveBook(@RequestBody BookDto bookDto) {
+    public ResponseEntity<BookDto> saveBook(@RequestHeader("Authorization") String authorization ,@RequestBody BookDto bookDto) {
     	return ResponseEntity.status(HttpStatus.CREATED)
-    	.body(bookService.save(bookDto));
+    	.body(bookService.save(bookDto,authorization));
     }
-    /*
-    @GetMapping
-    public ResponseEntity<List<BookDto>> getAllBookShelfs() {
-    	return ResponseEntity.status(HttpStatus.OK)
-    			.body(bookService.getAll());
-    }
-    */
+    
     
     @GetMapping ("/userbooks")
-    public ResponseEntity<List<BookDto>> getUserBooks() {
+    public ResponseEntity<List<BookDto>> getUserBooks(@RequestHeader("Authorization") String authorization) {
     	return ResponseEntity.status(HttpStatus.OK)
-    			.body(bookService.getUserBooks());
+    			.body(bookService.getUserBooks(authorization));
     }
     
 }

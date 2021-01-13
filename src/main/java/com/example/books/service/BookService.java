@@ -1,66 +1,69 @@
 package com.example.books.service;
 
-import static java.util.stream.Collectors.toList;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.example.books.dto.BookDto;
 import com.example.books.exceptions.BookApplicationException;
 import com.example.books.model.Book;
+import com.example.books.model.User;
 import com.example.books.repository.BookRepository;
+import com.example.books.repository.UserRepository;
+import com.example.books.security.JwtValidator;
 import com.example.books.service.BookService;
 
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @Service
-@AllArgsConstructor
 public class BookService {
 
-    private final BookRepository bookRepository;
-    //private final BookShelfMapper BookShelfMapper;
-    
-    private final AuthService authService;
-	
-    @Transactional
-	public BookDto save(BookDto bookDto) {
-		Book save = bookRepository.save(mapBookDto(bookDto));
-		bookDto.setId(save.getId());
-		return bookDto;
-	}
-    
-	@Transactional(readOnly = true)
-	public List<BookDto> getAll() {
-		return bookRepository.findAll()
-			.stream()
-			.map(this::mapToDto)
-			.collect(toList());
-		
-	}
-	
-	@Transactional(readOnly = true)
-	public List<BookDto> getUserBooks(){
-		return bookRepository.findAllUserBooks(authService.getCurrentUser().getUserId())
-				.stream()
-				.map(this::mapToDto)
-				.collect(toList());
-	}
-	
-	private BookDto mapToDto(Book book) {
-		return BookDto.builder().name(book.getName())
-				.description(book.getDescription())
-				.id(book.getId())
-				.build();
+	@Autowired
+	private BookRepository bookRepository;
+
+	@Autowired
+	UserRepository userRespository;
+
+	@Autowired
+	private JwtValidator jwtValidator;
+
+	@Transactional
+	public BookDto save(BookDto bookDto, String authorization) throws BookApplicationException {
+		String token = jwtValidator.getTokenFromRequest(authorization);
+		if (jwtValidator.isValid(token)) {
+			User user = userRespository.findByUsername(jwtValidator.getUsernameFromToken(token));
+
+			Book b = Book.builder().name(bookDto.getName()).description(bookDto.getDescription()).user(user).build();
+			Book save = bookRepository.save(b);
+			bookDto.setId(save.getId());
+			return bookDto;
+		} else {
+			throw new BookApplicationException("FAILED SAVING BOOK");
+		}
 	}
 
-	private Book mapBookDto(BookDto bookDto) {
-		return Book.builder().name(bookDto.getName())
-		.description(bookDto.getDescription())
-		.user(authService.getCurrentUser())
-		.build();
-		
+	@Transactional(readOnly = true)
+	public List<BookDto> getUserBooks(String authorization) throws BookApplicationException {
+		String token = jwtValidator.getTokenFromRequest(authorization);
+		if (jwtValidator.isValid(token)) {
+			User user = userRespository.findByUsername(jwtValidator.getUsernameFromToken(token));
+
+			Iterator<Book> userBooks = bookRepository.findAllUserBooks(user.getUserId()).iterator();
+			List<BookDto> userBooksDto = new ArrayList<BookDto>();
+			while (userBooks.hasNext()) {
+				Book b = userBooks.next();
+				userBooksDto
+						.add(BookDto.builder().name(b.getName()).description(b.getDescription()).id(b.getId()).build());
+			}
+
+			return userBooksDto;
+		} else {
+			throw new BookApplicationException("FAILED GETTING ALL USER BOOKS");
+		}
 	}
+
 }
